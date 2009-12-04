@@ -80,7 +80,7 @@ public class FilteredTable extends Composite {
 			IBaseLabelProvider labelProvider = ((TableViewer)viewer).getLabelProvider();
 			if (!(labelProvider instanceof ILabelProvider)) {
 				throw new RuntimeException("Please implement ILabelProvider for your" +
-						" label provider in order FilterTable works propertly.");
+						" label provider in order for FilterTable to work properly.");
 			}
 			String text = ((ILabelProvider)labelProvider).getText(element);
 			return fMatcher != null ? fMatcher.match(text) : true;
