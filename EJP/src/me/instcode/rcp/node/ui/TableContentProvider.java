@@ -12,6 +12,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.TableItem;
 
 public class TableContentProvider implements IStructuredContentProvider, RowDataChangeListener {
 	private TableViewer viewer;
@@ -81,7 +82,8 @@ public class TableContentProvider implements IStructuredContentProvider, RowData
 	protected void rowRemoved(Object data) {
 		// Try to transfer current selection to next item after
 		// deleting the given node from the tree.
-		Rectangle bounds = viewer.getTable().getSelection()[0].getBounds();
+		TableItem[] selections = viewer.getTable().getSelection();
+		Rectangle bounds = selections.length > 0 ? selections[0].getBounds() : new Rectangle(0, 0, 0, 0);
 		viewer.remove(data);
 		Item next = viewer.getTable().getItem(new Point(bounds.x, bounds.y));
 		if (next != null) {

@@ -73,7 +73,8 @@ public class TreeContentProvider implements ITreeContentProvider, RowDataChangeL
 	private void nodeRemoved(Node node) {
 		// Try to transfer current selection to next item after
 		// deleting the given node from the tree.
-		Rectangle bounds = viewer.getTree().getSelection()[0].getBounds();
+		TreeItem[] selections = viewer.getTree().getSelection();
+		Rectangle bounds = selections.length > 0 ? selections[0].getBounds() : new Rectangle(0, 0, 0, 0);
 		Node parent = node.getParent();
 		viewer.remove(parent, new Node[] { node });
 		TreeItem next = viewer.getTree().getItem(new Point(bounds.x, bounds.y));
