@@ -3,19 +3,32 @@ package me.instcode.rcp.node.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.instcode.event.ModifyListener;
+import me.instcode.event.ModifyTracker;
+import me.instcode.event.ModifyTrackerAwareness;
+
 /**
  * This is an implementation of a common row based data
  * structure which stores data row by row. The implementation
  * also supports notifying modification via event/listeners
  * mechanism.
  *
- * @author dcsnxk
+ * @author khoanguyen
  *
  */
-public abstract class RowBasedModel<T> {
-	private List<RowDataChangeListener> listeners = new ArrayList<RowDataChangeListener>();
+public abstract class RowBasedModel<T> implements ModifyTrackerAwareness {
+	private ModifyTracker tracker;
 	private List<T> list = new ArrayList<T>();
 
+	public RowBasedModel(ModifyTracker tracker) {
+		this.tracker = tracker;
+	}
+	
+	@Override
+	public ModifyTracker getModifyTracker() {
+		return tracker;
+	}
+	
 	/**
 	 * Add the given data to model
 	 * @param data
@@ -53,31 +66,21 @@ public abstract class RowBasedModel<T> {
 	}
 
 	/**
-	 * Add the given node change event listener to listeners
 	 * @param listener
 	 */
-	public void addRowDataChangeListener(RowDataChangeListener listener) {
-		listeners.add(listener);
-	}
+	public abstract void register(ModifyListener listener);
 	
 	/**
-	 * Remove the given node change event listener from listeners.
-	 * 
 	 * @param listener
-	 * @return
 	 */
-	public boolean removeRowDataChangeListener(RowDataChangeListener listener) {
-		return listeners.remove(listener);
-	}
-
+	public abstract void unregister(ModifyListener listener);
+	
 	/**
 	 * Fire a change event to all listeners.
 	 * @param event
 	 */
 	protected void fireRowDataChanged(RowDataChangeEvent event) {
-		for (RowDataChangeListener listener : listeners) {
-			listener.rowDataChanged(event);
-		}
+		tracker.fireModifyEvent(event);
 	}
 	
 	/**
@@ -85,7 +88,7 @@ public abstract class RowBasedModel<T> {
 	 * @param data
 	 */
 	protected void fireRowDataAdded(Object data) {
-		RowDataChangeEvent event = new RowDataChangeEvent(data, RowDataChangeEvent.ROW_DATA_ADDED_CHANGE);
+		RowDataChangeEvent event = new RowDataChangeEvent(this, data, RowDataChangeEvent.ROW_DATA_ADDED_CHANGE);
 		fireRowDataChanged(event);
 	}
 	
@@ -94,7 +97,7 @@ public abstract class RowBasedModel<T> {
 	 * @param data
 	 */
 	protected void fireRowDataRemoved(Object data) {
-		RowDataChangeEvent event = new RowDataChangeEvent(data, RowDataChangeEvent.ROW_DATA_REMOVED_CHANGE);
+		RowDataChangeEvent event = new RowDataChangeEvent(this, data, RowDataChangeEvent.ROW_DATA_REMOVED_CHANGE);
 		fireRowDataChanged(event);
 	}
 
@@ -103,7 +106,7 @@ public abstract class RowBasedModel<T> {
 	 * @param data
 	 */
 	protected void fireRowDataModified(Object data) {
-		RowDataChangeEvent event = new RowDataChangeEvent(data, RowDataChangeEvent.ROW_DATA_MODIFIED_CHANGE);
+		RowDataChangeEvent event = new RowDataChangeEvent(this, data, RowDataChangeEvent.ROW_DATA_MODIFIED_CHANGE);
 		fireRowDataChanged(event);
 	}
 }
