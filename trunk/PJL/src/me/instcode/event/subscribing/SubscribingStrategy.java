@@ -1,4 +1,4 @@
-package me.instcode.event.subcribing;
+package me.instcode.event.subscribing;
 
 import me.instcode.event.ModifyEvent;
 import me.instcode.event.ModifyListener;

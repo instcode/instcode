@@ -1,6 +1,6 @@
 package me.instcode.event;
 
-import me.instcode.event.subcribing.SubscribingStrategy;
+import me.instcode.event.subscribing.SubscribingStrategy;
 
 /**
  * A Facade pattern which uses to fire data modified event to
