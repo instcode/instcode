@@ -1,5 +1,6 @@
 package me.instcode.rcp.node.model;
 
+import me.instcode.event.ModifyTracker;
 
 /**
  * This is an implementation of a common hierarchical data
@@ -10,8 +11,12 @@ package me.instcode.rcp.node.model;
  * @author dcsnxk
  *
  */
-public class NodeModel extends RowBasedModel<Node> {
+public abstract class NodeModel extends RowBasedModel<Node> {
 	private Node root;
+
+	public NodeModel(ModifyTracker tracker) {
+		super(tracker);
+	}
 	
 	/**
 	 * Get root node.

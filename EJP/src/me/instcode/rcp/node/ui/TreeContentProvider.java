@@ -1,10 +1,11 @@
 package me.instcode.rcp.node.ui;
 
+import me.instcode.event.ModifyEvent;
+import me.instcode.event.ModifyListener;
 import me.instcode.rcp.node.model.Node;
 import me.instcode.rcp.node.model.NodeModel;
 import me.instcode.rcp.node.model.RowBasedModel;
 import me.instcode.rcp.node.model.RowDataChangeEvent;
-import me.instcode.rcp.node.model.RowDataChangeListener;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -19,15 +20,15 @@ import org.eclipse.swt.widgets.TreeItem;
  * This is a middle layer to connect a {@link RowBasedModel} with a
  * {@link TreeViewer}.
  * 
- * @author dcsnxk
+ * @author khoanguyen
  *
  */
-public class TreeContentProvider implements ITreeContentProvider, RowDataChangeListener {
+public class TreeContentProvider implements ITreeContentProvider, ModifyListener {
 	private TreeViewer viewer;
-	private Node root;
+	private NodeModel model;
 
 	@Override
-	public void rowDataChanged(final RowDataChangeEvent event) {
+	public void dataModified(final ModifyEvent event) {
 		Control control = viewer.getControl();
 		if (control.isDisposed() || control.getDisplay().isDisposed()) {
 			return;
@@ -38,39 +39,26 @@ public class TreeContentProvider implements ITreeContentProvider, RowDataChangeL
 			public void run() {
 				switch (event.getType()) {
 				case RowDataChangeEvent.ROW_DATA_ADDED_CHANGE:
-					nodeAdded((Node) event.getData());
+					rowAdded(event);
 					break;
 					
 				case RowDataChangeEvent.ROW_DATA_REMOVED_CHANGE:
-					nodeRemoved((Node) event.getData());			
+					rowRemoved(event);			
 					break;
 					
 				case RowDataChangeEvent.ROW_DATA_MODIFIED_CHANGE:
-					viewer.refresh(((Node) event.getData()).getParent());
+					rowModified(event);
 					break;
 				}
 			}
 		});
 	}
-	
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		this.viewer = (TreeViewer) viewer;
 
-		if (newInput != oldInput) {
-			if (oldInput != null) {
-				NodeModel model = (NodeModel) oldInput;
-				model.removeRowDataChangeListener(this);
-				root = null;
-			}
-			if (newInput != null) {
-				NodeModel model = (NodeModel) newInput;
-				model.addRowDataChangeListener(this);
-				root = model.getRoot();
-			}
+	private void rowRemoved(ModifyEvent event) {
+		if (event.getSource() != model) {
+			return;
 		}
-	}
-
-	private void nodeRemoved(Node node) {
+		Node node = (Node) event.getData();
 		// Try to transfer current selection to next item after
 		// deleting the given node from the tree.
 		TreeItem[] selections = viewer.getTree().getSelection();
@@ -84,13 +72,43 @@ public class TreeContentProvider implements ITreeContentProvider, RowDataChangeL
 		refresh(parent);
 	}
 	
-	private void nodeAdded(Node node) {
+	private void rowAdded(ModifyEvent event) {
+		if (event.getSource() != model) {
+			return;
+		}
+		Node node = (Node) event.getData();
 		Node parent = node.getParent();
 		viewer.add(parent, node);
 		viewer.setSelection(new StructuredSelection(new Object[] { node }), true);
 		refresh(parent);
 	}
 
+	private void rowModified(ModifyEvent event) {
+		if (event.getSource() != model) {
+			refresh(model.getRoot());
+		}
+		else {
+			refresh((Node) event.getData());
+		}
+	}
+	
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		this.viewer = (TreeViewer) viewer;
+
+		if (newInput != oldInput) {
+			if (oldInput != null) {
+				NodeModel model = (NodeModel) oldInput;
+				model.unregister(this);
+			}
+			if (newInput != null) {
+				NodeModel model = (NodeModel) newInput;
+				model.register(this);
+			}
+		}
+		
+		model = (NodeModel) newInput;
+	}
+	
 	/**
 	 * Refresh tree for the updates. <br>
 	 * 
@@ -100,7 +118,7 @@ public class TreeContentProvider implements ITreeContentProvider, RowDataChangeL
 	 * @param parent
 	 */
 	private void refresh(Node parent) {
-		if (parent == root) {
+		if (parent == model.getRoot()) {
 			viewer.refresh();
 		}
 		else {
@@ -121,10 +139,10 @@ public class TreeContentProvider implements ITreeContentProvider, RowDataChangeL
 	}
 
 	public Object[] getElements(Object inputElement) {
+		Node root = model.getRoot();
 		return root != null ? root.getChildren() : Node.NO_CHILDREN;
 	}
 
 	public void dispose() {
-		root = null;
 	}
 }

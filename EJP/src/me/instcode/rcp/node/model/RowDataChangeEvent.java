@@ -1,6 +1,9 @@
 package me.instcode.rcp.node.model;
 
-public class RowDataChangeEvent {
+import me.instcode.event.ModifyEvent;
+
+
+public class RowDataChangeEvent extends ModifyEvent {
 	/**
 	 * Event about a node has been added to model.
 	 */
@@ -16,29 +19,11 @@ public class RowDataChangeEvent {
 	 * been modified. 
 	 */
 	public static final int ROW_DATA_MODIFIED_CHANGE = 2;
-	
-	private Object data;
-	private int type;
-	
+
 	/**
 	 * Create instance
 	 */
-	public RowDataChangeEvent(Object data, int type) {
-		this.data = data;
-		this.type = type;
-	}
-
-	/**
-	 * @return The carried object
-	 */
-	public Object getData() {
-		return data;
-	}
-	
-	/**
-	 * @return The event type
-	 */
-	public int getType() {
-		return type;
+	public RowDataChangeEvent(Object source, Object data, int type) {
+		super(source, data, type);
 	}
 }
