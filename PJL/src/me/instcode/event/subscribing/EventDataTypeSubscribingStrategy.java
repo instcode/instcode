@@ -1,4 +1,4 @@
-package me.instcode.event.subcribing;
+package me.instcode.event.subscribing;
 
 import java.util.List;
 
