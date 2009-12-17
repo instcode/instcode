@@ -1,4 +1,4 @@
-package me.instcode.jface.ui;
+package me.instcode.eclipse.ui;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;

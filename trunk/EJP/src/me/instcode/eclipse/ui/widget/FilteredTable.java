@@ -1,4 +1,4 @@
-package me.instcode.jface.ui.widget;
+package me.instcode.eclipse.ui.widget;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
