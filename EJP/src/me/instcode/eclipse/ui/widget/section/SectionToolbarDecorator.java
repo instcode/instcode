@@ -1,4 +1,4 @@
-package me.instcode.jface.ui.widget.section;
+package me.instcode.eclipse.ui.widget.section;
 
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;

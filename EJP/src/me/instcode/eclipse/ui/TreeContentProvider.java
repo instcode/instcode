@@ -1,11 +1,11 @@
-package me.instcode.rcp.node.ui;
+package me.instcode.eclipse.ui;
 
 import me.instcode.event.ModifyEvent;
 import me.instcode.event.ModifyListener;
-import me.instcode.rcp.node.model.Node;
-import me.instcode.rcp.node.model.NodeModel;
-import me.instcode.rcp.node.model.RowBasedModel;
-import me.instcode.rcp.node.model.RowDataChangeEvent;
+import me.instcode.model.RowBasedModel;
+import me.instcode.model.RowDataChangeEvent;
+import me.instcode.model.node.Node;
+import me.instcode.model.node.NodeModel;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.TreeItem;
  * This is a middle layer to connect a {@link RowBasedModel} with a
  * {@link TreeViewer}.
  * 
- * @author khoanguyen
+ * @author dcsnxk
  *
  */
 public class TreeContentProvider implements ITreeContentProvider, ModifyListener {
@@ -49,6 +49,10 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 				case RowDataChangeEvent.ROW_DATA_MODIFIED_CHANGE:
 					rowModified(event);
 					break;
+				
+				case RowDataChangeEvent.ROWS_REMOVED_CHANGE:
+					rowsRemoved(event);
+					break;
 				}
 			}
 		});
@@ -69,7 +73,6 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 		if (next != null) {
 			viewer.setSelection(new StructuredSelection(new Object[] { next.getData() }), true);
 		}
-		refresh(parent);
 	}
 	
 	private void rowAdded(ModifyEvent event) {
@@ -80,7 +83,6 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 		Node parent = node.getParent();
 		viewer.add(parent, node);
 		viewer.setSelection(new StructuredSelection(new Object[] { node }), true);
-		refresh(parent);
 	}
 
 	private void rowModified(ModifyEvent event) {
@@ -90,6 +92,10 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 		else {
 			refresh((Node) event.getData());
 		}
+	}
+
+	private void rowsRemoved(ModifyEvent event) {
+		refresh(model.getRoot());
 	}
 	
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {

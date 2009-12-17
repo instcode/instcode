@@ -1,9 +1,9 @@
-package me.instcode.rcp.node.ui;
+package me.instcode.eclipse.ui;
 
 import me.instcode.event.ModifyEvent;
 import me.instcode.event.ModifyListener;
-import me.instcode.rcp.node.model.RowBasedModel;
-import me.instcode.rcp.node.model.RowDataChangeEvent;
+import me.instcode.model.RowBasedModel;
+import me.instcode.model.RowDataChangeEvent;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -41,6 +41,10 @@ public class TableContentProvider implements IStructuredContentProvider, ModifyL
 				case RowDataChangeEvent.ROW_DATA_MODIFIED_CHANGE:
 					rowModified(event);
 					break;
+				
+				case RowDataChangeEvent.ROWS_REMOVED_CHANGE:
+					rowsRemoved(event);
+					break;
 				}
 			}
 		});
@@ -52,7 +56,6 @@ public class TableContentProvider implements IStructuredContentProvider, ModifyL
 		}
 		Object data = event.getData();
 		viewer.add(data);
-		viewer.refresh(data);
 		viewer.setSelection(new StructuredSelection(new Object[] { data }), true);
 	}
 
@@ -70,10 +73,20 @@ public class TableContentProvider implements IStructuredContentProvider, ModifyL
 		if (next != null) {
 			viewer.setSelection(new StructuredSelection(new Object[] { next.getData() }), true);
 		}
-		viewer.refresh();
 	}
 
 	protected void rowModified(ModifyEvent event) {
+		if (event.getSource() != model) {
+			viewer.refresh();
+		}
+		else {
+			viewer.refresh(event.getData());
+		}
+	}
+	
+	private void rowsRemoved(ModifyEvent event) {
+		//viewer.remove(event.getData());
+		System.out.println(event.getSource());
 		viewer.refresh();
 	}
 	

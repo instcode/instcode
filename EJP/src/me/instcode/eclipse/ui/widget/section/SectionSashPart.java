@@ -1,6 +1,6 @@
-package me.instcode.jface.ui.widget.section;
+package me.instcode.eclipse.ui.widget.section;
 
-import me.instcode.jface.ui.widget.section.SectionToolbarDecorator.SectionToolbar;
+import me.instcode.eclipse.ui.widget.section.SectionToolbarDecorator.SectionToolbar;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
