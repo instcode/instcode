@@ -2,10 +2,10 @@ package me.instcode.eclipse.ui;
 
 import me.instcode.event.ModifyEvent;
 import me.instcode.event.ModifyListener;
-import me.instcode.model.RowBasedModel;
-import me.instcode.model.RowDataChangeEvent;
+import me.instcode.model.StructuredModel;
+import me.instcode.model.RowModelChangeEvent;
 import me.instcode.model.node.Node;
-import me.instcode.model.node.NodeModel;
+import me.instcode.model.node.TreeModel;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -17,15 +17,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TreeItem;
 
 /**
- * This is a middle layer to connect a {@link RowBasedModel} with a
+ * This is a UI model to connect a {@link StructuredModel} with a
  * {@link TreeViewer}.
  * 
- * @author dcsnxk
+ * @author khoanguyen
  *
  */
 public class TreeContentProvider implements ITreeContentProvider, ModifyListener {
 	private TreeViewer viewer;
-	private NodeModel model;
+	private TreeModel model;
 
 	@Override
 	public void dataModified(final ModifyEvent event) {
@@ -34,23 +34,27 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 			return;
 		}
 		
-		control.getDisplay().asyncExec(new Runnable() {
+		control.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				switch (event.getType()) {
-				case RowDataChangeEvent.ROW_DATA_ADDED_CHANGE:
+				case RowModelChangeEvent.MODEL_RESET:
+					modelReset(event);
+					break;
+					
+				case RowModelChangeEvent.ROW_ADDED:
 					rowAdded(event);
 					break;
 					
-				case RowDataChangeEvent.ROW_DATA_REMOVED_CHANGE:
+				case RowModelChangeEvent.ROW_REMOVED:
 					rowRemoved(event);			
 					break;
 					
-				case RowDataChangeEvent.ROW_DATA_MODIFIED_CHANGE:
+				case RowModelChangeEvent.ROW_DATA_MODIFIED:
 					rowModified(event);
 					break;
 				
-				case RowDataChangeEvent.ROWS_REMOVED_CHANGE:
+				case RowModelChangeEvent.ROWS_REMOVED:
 					rowsRemoved(event);
 					break;
 				}
@@ -58,7 +62,11 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 		});
 	}
 
-	private void rowRemoved(ModifyEvent event) {
+	protected void modelReset(ModifyEvent event) {
+		refresh(model.getRoot());
+	}
+
+	protected void rowRemoved(ModifyEvent event) {
 		if (event.getSource() != model) {
 			return;
 		}
@@ -75,7 +83,7 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 		}
 	}
 	
-	private void rowAdded(ModifyEvent event) {
+	protected void rowAdded(ModifyEvent event) {
 		if (event.getSource() != model) {
 			return;
 		}
@@ -85,7 +93,7 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 		viewer.setSelection(new StructuredSelection(new Object[] { node }), true);
 	}
 
-	private void rowModified(ModifyEvent event) {
+	protected void rowModified(ModifyEvent event) {
 		if (event.getSource() != model) {
 			refresh(model.getRoot());
 		}
@@ -94,7 +102,7 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 		}
 	}
 
-	private void rowsRemoved(ModifyEvent event) {
+	protected void rowsRemoved(ModifyEvent event) {
 		refresh(model.getRoot());
 	}
 	
@@ -103,16 +111,16 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 
 		if (newInput != oldInput) {
 			if (oldInput != null) {
-				NodeModel model = (NodeModel) oldInput;
+				TreeModel model = (TreeModel) oldInput;
 				model.unregister(this);
 			}
 			if (newInput != null) {
-				NodeModel model = (NodeModel) newInput;
+				TreeModel model = (TreeModel) newInput;
 				model.register(this);
 			}
 		}
 		
-		model = (NodeModel) newInput;
+		model = (TreeModel) newInput;
 	}
 	
 	/**

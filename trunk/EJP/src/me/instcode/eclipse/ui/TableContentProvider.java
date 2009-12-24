@@ -2,8 +2,8 @@ package me.instcode.eclipse.ui;
 
 import me.instcode.event.ModifyEvent;
 import me.instcode.event.ModifyListener;
-import me.instcode.model.RowBasedModel;
-import me.instcode.model.RowDataChangeEvent;
+import me.instcode.model.TableModel;
+import me.instcode.model.RowModelChangeEvent;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 public class TableContentProvider implements IStructuredContentProvider, ModifyListener {
 	private TableViewer viewer;
-	private RowBasedModel model;
+	private TableModel model;
 
 	@Override
 	public void dataModified(final ModifyEvent event) {
@@ -26,28 +26,36 @@ public class TableContentProvider implements IStructuredContentProvider, ModifyL
 			return;
 		}
 		
-		control.getDisplay().asyncExec(new Runnable() {
+		control.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				switch (event.getType()) {
-				case RowDataChangeEvent.ROW_DATA_ADDED_CHANGE:
+				case RowModelChangeEvent.MODEL_RESET:
+					modelReset(event);
+					break;
+					
+				case RowModelChangeEvent.ROW_ADDED:
 					rowAdded(event);
 					break;
 					
-				case RowDataChangeEvent.ROW_DATA_REMOVED_CHANGE:
+				case RowModelChangeEvent.ROW_REMOVED:
 					rowRemoved(event);
 					break;
 					
-				case RowDataChangeEvent.ROW_DATA_MODIFIED_CHANGE:
+				case RowModelChangeEvent.ROW_DATA_MODIFIED:
 					rowModified(event);
 					break;
 				
-				case RowDataChangeEvent.ROWS_REMOVED_CHANGE:
+				case RowModelChangeEvent.ROWS_REMOVED:
 					rowsRemoved(event);
 					break;
 				}
 			}
 		});
+	}
+
+	protected void modelReset(ModifyEvent event) {
+		viewer.refresh();
 	}
 
 	protected void rowAdded(ModifyEvent event) {
@@ -85,9 +93,7 @@ public class TableContentProvider implements IStructuredContentProvider, ModifyL
 	}
 	
 	private void rowsRemoved(ModifyEvent event) {
-		//viewer.remove(event.getData());
-		System.out.println(event.getSource());
-		viewer.refresh();
+		viewer.remove((Object[])event.getData());
 	}
 	
 	@Override
@@ -101,16 +107,16 @@ public class TableContentProvider implements IStructuredContentProvider, ModifyL
 
 		if (newInput != oldInput) {
 			if (oldInput != null) {
-				RowBasedModel model = (RowBasedModel) oldInput;
+				TableModel model = (TableModel) oldInput;
 				model.unregister(this);
 			}
 			if (newInput != null) {
-				RowBasedModel model = (RowBasedModel) newInput;
+				TableModel model = (TableModel) newInput;
 				model.register(this);
 			}
 		}
 		
-		model = (RowBasedModel) newInput;
+		model = (TableModel) newInput;
 	}
 
 	@Override
