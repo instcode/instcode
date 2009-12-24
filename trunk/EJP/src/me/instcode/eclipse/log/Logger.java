@@ -65,8 +65,8 @@ public class Logger {
 		case ERROR:
 			severity = IStatus.ERROR;
 		}
-		message = (message != null) ? message : "null"; //$NON-NLS-1$
-		Status statusObj = new Status(severity, PLUGIN_ID, severity, message,
+		String msg = (message != null) ? message : "null"; //$NON-NLS-1$
+		Status statusObj = new Status(severity, PLUGIN_ID, severity, msg,
 				exception);
 		Bundle bundle = Platform.getBundle(PLUGIN_ID);
 		if (bundle != null) {
@@ -86,9 +86,9 @@ public class Logger {
 	protected static void _trace(String category, String message,
 			Throwable exception) {
 		if (isTracing(category)) {
-			message = (message != null) ? message : "null"; //$NON-NLS-1$
+			String msg = (message != null) ? message : "null"; //$NON-NLS-1$
 			Status statusObj = new Status(IStatus.OK, PLUGIN_ID, IStatus.OK,
-					message, exception);
+					msg, exception);
 			Bundle bundle = Platform.getBundle(PLUGIN_ID);
 			if (bundle != null) {
 				Platform.getLog(bundle).log(statusObj);

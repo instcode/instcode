@@ -67,6 +67,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * 
  * @since 3.2
  */
+@SuppressWarnings("restriction")
 public class FilteredTable extends Composite {
 
 	/**

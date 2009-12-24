@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 public class TableContentProvider implements IStructuredContentProvider, ModifyListener {
 	private TableViewer viewer;
-	private TableModel model;
+	private TableModel<?> model;
 
 	@Override
 	public void dataModified(final ModifyEvent event) {
@@ -107,16 +107,16 @@ public class TableContentProvider implements IStructuredContentProvider, ModifyL
 
 		if (newInput != oldInput) {
 			if (oldInput != null) {
-				TableModel model = (TableModel) oldInput;
+				TableModel<?> model = (TableModel<?>) oldInput;
 				model.unregister(this);
 			}
 			if (newInput != null) {
-				TableModel model = (TableModel) newInput;
+				TableModel<?> model = (TableModel<?>) newInput;
 				model.register(this);
 			}
 		}
 		
-		model = (TableModel) newInput;
+		model = (TableModel<?>) newInput;
 	}
 
 	@Override

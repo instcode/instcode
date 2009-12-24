@@ -3,6 +3,7 @@ package me.instcode.eclipse.ui.widget.section;
 import me.instcode.eclipse.ui.widget.section.SectionToolbarDecorator.SectionToolbar;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -35,7 +36,7 @@ public abstract class SectionSashPart implements SectionToolbar {
 	}
 
 	protected Action createVerAction() {
-		Action vAction = new Action("[-]", Action.AS_RADIO_BUTTON) {
+		Action vAction = new Action("[-]", IAction.AS_RADIO_BUTTON) {
 			public void run() {
 				sashForm.setOrientation(SWT.VERTICAL);
 			}
@@ -47,7 +48,7 @@ public abstract class SectionSashPart implements SectionToolbar {
 	}
 
 	protected Action createHorAction() {
-		Action hAction = new Action("[|]", Action.AS_RADIO_BUTTON) {
+		Action hAction = new Action("[|]", IAction.AS_RADIO_BUTTON) {
 			public void run() {
 				sashForm.setOrientation(SWT.HORIZONTAL);
 			}
