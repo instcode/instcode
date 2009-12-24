@@ -1,6 +1,7 @@
 package me.instcode.eclipse.ui;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -63,21 +64,21 @@ public class UIUtil {
 			return;
 		}
 		
-		Action selectAllAction = new Action("Select All", Action.AS_PUSH_BUTTON) {
+		Action selectAllAction = new Action("Select All", IAction.AS_PUSH_BUTTON) {
 			public void run() {
 				((CheckboxTableViewer)viewer).setAllChecked(true);
 			}
 		};
 		menu.add(selectAllAction);
 		
-		Action deselectAllAction = new Action("Deselect All", Action.AS_PUSH_BUTTON) {
+		Action deselectAllAction = new Action("Deselect All", IAction.AS_PUSH_BUTTON) {
 			public void run() {
 				((CheckboxTableViewer)viewer).setAllChecked(false);
 			}
 		};
 		menu.add(deselectAllAction);
 		
-		Action invertSelectionAction = new Action("Inverse Selection", Action.AS_PUSH_BUTTON) {
+		Action invertSelectionAction = new Action("Inverse Selection", IAction.AS_PUSH_BUTTON) {
 			public void run() {
 				Table table = ((CheckboxTableViewer)viewer).getTable();
 				int itemCount = table.getItemCount();

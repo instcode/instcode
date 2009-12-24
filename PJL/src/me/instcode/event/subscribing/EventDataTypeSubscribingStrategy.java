@@ -21,7 +21,9 @@ public class EventDataTypeSubscribingStrategy extends AbstractSubscribingStrateg
 				}
 			}
 		}
-		
+		if (listeners == null) {
+			return new ModifyListener[0];
+		}
 		return listeners.toArray(new ModifyListener[listeners.size()]);
 	}
 }
