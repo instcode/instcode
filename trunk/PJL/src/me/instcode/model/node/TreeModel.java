@@ -1,7 +1,8 @@
 package me.instcode.model.node;
 
 import me.instcode.event.ModifyTracker;
-import me.instcode.model.RowBasedModel;
+import me.instcode.model.RowModelChangeEvent;
+import me.instcode.model.StructuredModel;
 
 /**
  * This is an implementation of a common hierarchical data
@@ -9,13 +10,13 @@ import me.instcode.model.RowBasedModel;
  * also supports notifying modification via event/listeners
  * mechanism.
  *
- * @author dcsnxk
+ * @author khoanguyen
  *
  */
-public abstract class NodeModel extends RowBasedModel<Node> {
+public abstract class TreeModel extends StructuredModel<Node> {
 	private Node root;
 
-	public NodeModel(ModifyTracker tracker) {
+	public TreeModel(ModifyTracker tracker) {
 		super(tracker);
 	}
 	
@@ -29,7 +30,7 @@ public abstract class NodeModel extends RowBasedModel<Node> {
 	}
 	
 	/**
-	 * Set root node.
+	 * Set root node for this tree.
 	 * 
 	 * @param root
 	 */
@@ -38,37 +39,37 @@ public abstract class NodeModel extends RowBasedModel<Node> {
 	}
 	
 	/**
-	 * Add a node to the hierarchical tree.<br>
+	 * {@inheritDoc}
 	 * <br>
-	 * Note: Client should provide parent node of
+	 * @note Client should provide parent node of
 	 * the specified node before calling this method.
-	 * 
 	 * @param node Node to be added to the tree 	
 	 */
 	@Override
 	public void add(Node node) {
 		Node parent = node.getParent();
 		parent.add(node);
-		fireRowDataAdded(node);
+		fireChanged(node, RowModelChangeEvent.ROW_ADDED);
 	}
 	
 	/**
-	 * Remove the specified node from the current tree<br>
+	 * {@inheritDoc}
 	 * <br>
-	 * Note: Client should provide parent node of
+	 * @note Client should provide parent node of
 	 * the specified node before calling this method.
 	 * 
-	 * @param node Node to be added to the tree 	
+	 * @param node Node to be added to the tree
 	 */
 	@Override
 	public void remove(Node node) {
 		Node parent = node.getParent();
 		parent.remove(node);
-		fireRowDataRemoved(node);
+		fireChanged(node, RowModelChangeEvent.ROW_REMOVED);
 	}
 	
 	@Override
-	public Node[] getAll() {
-		return root != null ? root.getChildren() : Node.NO_CHILDREN;
+	public void clear() {
+		root.clear();
+		fireChanged(this, RowModelChangeEvent.MODEL_RESET);
 	}
 }

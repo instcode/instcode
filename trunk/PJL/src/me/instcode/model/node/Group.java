@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Supports node with children. 
  * 
- * @author dcsnxk
+ * @author khoanguyen
  *
  */
 public class Group extends Node {
@@ -29,6 +29,11 @@ public class Group extends Node {
 	@Override
 	public boolean remove(Node child) {
 		return nodes.remove(child);
+	}
+	
+	@Override
+	public void clear() {
+		nodes.clear();
 	}
 	
 	@Override

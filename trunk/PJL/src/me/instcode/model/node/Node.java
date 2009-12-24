@@ -3,7 +3,7 @@ package me.instcode.model.node;
 /**
  * Node, without children.
  * 
- * @author dcsnxk
+ * @author khoanguyen
  *
  */
 public class Node {
@@ -38,6 +38,12 @@ public class Node {
 	 */
 	public boolean remove(Node child) {
 		return true;
+	}
+	
+	/**
+	 * Clear all children
+	 */
+	public void clear() {
 	}
 	
 	/**
