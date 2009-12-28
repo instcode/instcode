@@ -55,7 +55,6 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 					break;
 				
 				case RowModelChangeEvent.ROWS_REMOVED:
-					rowsRemoved(event);
 					break;
 				}
 			}
@@ -63,7 +62,7 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 	}
 
 	protected void modelReset(ModifyEvent event) {
-		refresh(model.getRoot());
+		viewer.refresh();
 	}
 
 	protected void rowRemoved(ModifyEvent event) {
@@ -77,6 +76,7 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 		Rectangle bounds = selections.length > 0 ? selections[0].getBounds() : new Rectangle(0, 0, 0, 0);
 		Node parent = node.getParent();
 		viewer.remove(parent, new Node[] { node });
+		refreshIfNeeds(parent);
 		TreeItem next = viewer.getTree().getItem(new Point(bounds.x, bounds.y));
 		if (next != null) {
 			viewer.setSelection(new StructuredSelection(new Object[] { next.getData() }), true);
@@ -90,20 +90,25 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 		Node node = (Node) event.getData();
 		Node parent = node.getParent();
 		viewer.add(parent, node);
+		refreshIfNeeds(parent);
 		viewer.setSelection(new StructuredSelection(new Object[] { node }), true);
 	}
 
+	/**
+	 * Update tree view if any row has been modified.<br>
+	 * If the modifying event is from an external source (i.e, this tree depends
+	 * on that modification), the whole tree will be refreshed. Otherwise, this
+	 * will only update the given modified node.
+	 * 
+	 * @param event
+	 */
 	protected void rowModified(ModifyEvent event) {
 		if (event.getSource() != model) {
-			refresh(model.getRoot());
+			viewer.refresh();
 		}
 		else {
-			refresh((Node) event.getData());
+			viewer.refresh(event.getData());
 		}
-	}
-
-	protected void rowsRemoved(ModifyEvent event) {
-		refresh(model.getRoot());
 	}
 	
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
@@ -124,19 +129,14 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 	}
 	
 	/**
-	 * Refresh tree for the updates. <br>
+	 * This method does refresh tree for the updates <b>ONLY IF</b>
+	 * the given node is the invisible root node.
 	 * 
-	 * Because root node is invisible, we have to refresh
-	 * all the tree if the specified node is root.
-	 * 
-	 * @param parent
+	 * @param node
 	 */
-	private void refresh(Node parent) {
-		if (parent == model.getRoot()) {
+	private void refreshIfNeeds(Node node) {
+		if (node == model.getRoot()) {
 			viewer.refresh();
-		}
-		else {
-			viewer.refresh(parent);
 		}
 	}
 
@@ -158,5 +158,6 @@ public class TreeContentProvider implements ITreeContentProvider, ModifyListener
 	}
 
 	public void dispose() {
+		model = null;
 	}
 }
