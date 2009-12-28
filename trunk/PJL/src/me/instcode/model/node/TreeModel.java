@@ -39,15 +39,20 @@ public abstract class TreeModel extends StructuredModel<Node> {
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 * <br>
-	 * @note Client should provide parent node of
-	 * the specified node before calling this method.
-	 * @param node Node to be added to the tree 	
+	 * {@inheritDoc} <br>
+	 * Client should provide parent node of the specified node before calling
+	 * this method. Otherwise, the root node will be used.
+	 * 
+	 * @param node
+	 *            Node to be added to the tree
 	 */
 	@Override
 	public void add(Node node) {
 		Node parent = node.getParent();
+		if (parent == null) {
+			parent = root;
+			node.setParent(parent);
+		}
 		parent.add(node);
 		fireChanged(node, RowModelChangeEvent.ROW_ADDED);
 	}

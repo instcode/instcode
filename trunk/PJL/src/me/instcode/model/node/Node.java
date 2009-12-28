@@ -54,6 +54,13 @@ public class Node {
 	}
 
 	/**
+	 * @param parent
+	 */
+	public void setParent(Node parent) {
+		this.parent = parent;
+	}
+	
+	/**
 	 * @return true if this node has children
 	 */
 	public boolean hasChildren() {
