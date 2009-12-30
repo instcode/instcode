@@ -56,6 +56,23 @@ public abstract class TableModel<T> extends StructuredModel<T> {
 	}
 	
 	/**
+	 * Retrieve item at the given index
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public T get(int index) {
+		return list.get(index);
+	}
+	
+	/**
+	 * @return number of rows in this table
+	 */
+	public int size() {
+		return list.size();
+	}
+	
+	/**
 	 * Get all item inside
 	 * @return
 	 */
