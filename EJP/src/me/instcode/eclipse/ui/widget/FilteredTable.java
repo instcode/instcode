@@ -454,7 +454,7 @@ public class FilteredTable extends Composite {
 						&& initialText.equals(text);
 				if (initial) {
 					patternFilter.setPattern(null);
-				} else if (text != null) {
+				} else {
 					patternFilter.setPattern(text);
 				}
 
@@ -1008,7 +1008,7 @@ public class FilteredTable extends Composite {
 					&& initialText.equals(filterText);
 				if (initial) {
 					filter.setPattern(null);
-				} else if (filterText != null) {
+				} else {
 					filter.setPattern(filterText);
 				}
 			}
