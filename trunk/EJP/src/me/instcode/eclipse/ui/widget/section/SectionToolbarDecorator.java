@@ -40,7 +40,7 @@ public class SectionToolbarDecorator {
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if (handCursor != null && !handCursor.isDisposed()) {
+				if (!handCursor.isDisposed()) {
 					handCursor.dispose();
 				}
 			}
