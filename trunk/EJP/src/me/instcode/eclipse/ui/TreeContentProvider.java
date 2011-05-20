@@ -2,8 +2,8 @@ package me.instcode.eclipse.ui;
 
 import me.instcode.event.ModifyEvent;
 import me.instcode.event.ModifyListener;
-import me.instcode.model.StructuredModel;
 import me.instcode.model.RowModelChangeEvent;
+import me.instcode.model.StructuredModel;
 import me.instcode.model.node.Node;
 import me.instcode.model.node.TreeModel;
 
